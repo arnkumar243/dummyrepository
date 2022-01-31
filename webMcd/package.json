@@ -1,0 +1,30 @@
+{
+  "name": "wmcd-cli",
+  "version": "1.0.0",
+  "description": "connects to webmethods cloud deployment",
+  "main": "app.js",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "cli-table3": "^0.5.1",
+    "json-colorizer": "^2.1.2",
+    "jsonpath-plus": "^0.18.0",
+    "minimist": "^1.2.0",
+    "ora": "^3.2.0",
+    "properties-reader": "^0.0.16",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "semver": "^6.0.0",
+    "vorpal": "^1.12.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=10.13.0"
+  },
+  "author": "Software AG",
+  "license": "ISC",
+  "bin": {
+    "wmcd-cli": "src/app.js"
+  }
+}

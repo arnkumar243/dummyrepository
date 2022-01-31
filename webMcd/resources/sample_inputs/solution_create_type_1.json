@@ -1,0 +1,28 @@
+{
+	"integration": {
+		"landscapeDefinition": {
+			"solutionName": "Demo",
+			"description": "Demo Solution",
+			"solutionType": 1,
+			"productDefinitions": {
+				"IS": [{
+					"name": "IS",
+					"replicaCount": "1",
+					"dependencies": ["DB"],
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"clusterType": null,
+					"isClustered": false,
+					"version": "10.5",
+					"env": {
+						"packages": ["packages.WmCloudStreams.enabled=true", "packages.WmJDBCAdapter.enabled=true"]
+					}
+				}]
+			}
+		}
+	}
+}

@@ -1,0 +1,986 @@
+{
+	"alerts": [{
+		"id": "alert-list",
+		"method": "GET",
+		"url": "",
+		"description": "Lists all the alerts.",
+		"loaderText": "Retrieving Alerts",
+		"options": [{
+			"name": "stageName",
+			"allowedValues": ["development", "test", "live", "preLive"],
+			"transform": {
+				"development": "stage00",
+				"test": "stage01",
+				"preLive": "stage02",
+				"live": "stage99"
+			}
+		},{
+			"name": "runtime",
+			"allowedValues": ["IS", "UM", "TC"],
+			"transform": {
+				"IS": "is",
+				"UM": "um",
+				"TC": "tc"
+			}
+		},{
+			"name": "severity",
+			"allowedValues": ["critical", "warning", "info"],
+			"transform": {
+				"critical": "Critical",
+				"warning": "Warning",
+				"info": "Information"
+			}
+		}],
+		"view": {
+			"table": [{
+				"title": "Alerts",
+				"path": "$.data.result",
+				"isArray": true,
+				"header": ["Solution Name", "Stage", "Runtime", "Instance", "Alert Name", "Start Date", "Severity", "Status"],
+				"body": [{
+						"path": "$.metric.solution"
+					},
+					{
+						"path": "$.metric.stage",
+						"transform": {
+							"stage00": "Development",
+							"stage01": "Test",
+							"stage02": "Live",
+							"stage99": "Pre Live"
+						}
+					},
+					{
+						"path": "$.metric.product",
+						"transform": {
+							"is": "IS",
+							"um": "UM",
+							"tc": "TC"
+						}
+					},
+					{
+						"path": "$.metric.app"
+					},
+					{
+						"path": "$.metric.alertname"
+					},
+					{
+						"path": "$.value[0]",
+						"isDate": true
+					},
+					{
+						"path": "$.metric.severity"
+					},
+					{
+						"path": "$.metric.alertstate",
+						"transform": {
+							"firing": "Active"
+						},
+						"color": {
+							"Active": "red"
+						}
+					}
+				]
+			}],
+			"json": {
+				"path": "$.data.result"
+			}
+		},
+		"error": {
+			"path": ""
+		}
+	}],
+	"assets-repo": [{
+		"id": "asset-repo-list-assets",
+		"method": "GET",
+		"url": "/integration/rest/external/v1/cdep/binaryAssets/solutions/{solutionName}/nodes/{nodeName}",
+		"command": "asset-repo list-assets <solutionName> <nodeName> <stageName>",
+		"description": "Retrieves the list of composites and Configurations available in LAR.",
+		"loaderText": "Retrieving Assets List",
+		"options": [{
+			"name": "stageName",
+			"allowedValues": ["development", "test", "live", "preLive"]
+			}],
+		"inputs": [{
+				"name": "solutionName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "nodeName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "stageName",
+				"type": "query",
+				"required": true
+			}
+		],
+		"view": {
+			"table": [{
+				"title": "Packages",
+				"path": "$.integration.cicdBean.acdlComposite.IS",
+				"isArray": true,
+				"header": ["Package Name"],
+				"body": [{
+						"path": "name"
+					}
+				]
+			},{
+				"title": "Configurations",
+				"path": "$.integration.cicdBean.acdlComposite.CC",
+				"isArray": true,
+				"header": ["Configuration Name"],
+				"body": [{
+						"path": "name"
+					}
+				]
+			}],
+			"json": {
+				"path": "$.integration.cicdBean.acdlComposite"
+			}
+		},
+		"error": {
+			"path": "$.integration.message.description"
+		}
+	}],
+	"solution": [{
+			"id": "solution-list",
+			"method": "GET",
+			"url": "/integration/rest/external/v1/cdep/solutions",
+			"command": "solution list <stageName>",
+			"description": "Lists all the solution in a particular stage.",
+			"loaderText": "Retrieving Solutions List",
+			"options": [{}],
+			"inputs": [{
+				"name": "stageName",
+				"type": "query",
+				"required": true,
+				"isStageID": true
+			}],
+			"view": {
+				"table": [{
+					"title": "Solutions",
+					"path": "$.integration.serviceData.solutions",
+					"isArray": true,
+					"header": ["Solution Name", "Description", "Status"],
+					"body": [{
+							"path": "solutionName"
+						},
+						{
+							"path": "description"
+						},
+						{
+							"path": "active",
+							"isBoolean": true,
+							"trueValue": "Activated",
+							"falseValue": "Deactivated"
+						}
+					]
+				}],
+				"json": {
+					"path": "$.integration.serviceData"
+				}
+			},
+			"error": {
+				"path": "$.integration.message.description"
+			}
+		}, {
+			"id": "solution-get",
+			"method": "GET",
+			"url": "/integration/rest/external/v1/cdep/solutions/{solutionName}",
+			"command": "solution get <solutionName> <stageName>",
+			"description": "Get the Solution data.",
+			"loaderText": "Getting Solution Info",
+			"options": [{}],
+			"inputs": [{
+				"name": "solutionName",
+				"type": "uri",
+				"required": true
+			}, {
+				"name": "stageName",
+				"paramName": "stage",
+				"type": "query",
+				"required": false,
+				"isStageID": true
+			}],
+			"view": {
+				"table": [{
+					"title": "Integration Server",
+					"path": "$.integration.serviceData.productDefinitions.IS",
+					"isArray": true,
+					"header": ["Name", "Version", "Image", "Replica Count", "CPU (Cores)", "Memory (GB)"],
+					"body": [{
+							"path": "name"
+						},
+						{
+							"path": "version"
+						},
+						{
+							"path": "$.image.tag"
+						},
+						{
+							"path": "replicaCount"
+						},
+						{
+							"path": "$.resources.limits.cpu"
+						},
+						{
+							"path": "$.resources.limits.memory"
+						}
+					]
+				}, {
+					"title": "Universal Messaging",
+					"path": "$.integration.serviceData.productDefinitions.UNIVERSALMESSAGING",
+					"isArray": true,
+					"header": ["Name", "Version", "Image", "Replica Count", "CPU (Cores)", "Memory (GB)"],
+					"body": [{
+							"path": "name"
+						},
+						{
+							"path": "version"
+						},
+						{
+							"path": "$.image.tag"
+						},
+						{
+							"path": "replicaCount"
+						},
+						{
+							"path": "$.resources.limits.cpu"
+						},
+						{
+							"path": "$.resources.limits.memory"
+						}
+					]
+				}, {
+					"title": "Terracotta",
+					"path": "$.integration.serviceData.productDefinitions.TERRACOTTA",
+					"isArray": true,
+					"header": ["Name", "Version", "Image", "Replica Count", "CPU (Cores)", "Memory (GB)"],
+					"body": [{
+							"path": "name"
+						},
+						{
+							"path": "version"
+						},
+						{
+							"path": "$.image.tag"
+						},
+						{
+							"path": "replicaCount"
+						},
+						{
+							"path": "$.resources.limits.cpu"
+						},
+						{
+							"path": "$.resources.limits.memory"
+						}
+					]
+				}],
+				"json": {
+					"path": "$.integration.serviceData"
+				}
+			},
+			"error": {
+				"path": "$.integration.message.description"
+			}
+		},
+		{
+			"id": "solution-delete",
+			"method": "DELETE",
+			"url": "/integration/rest/external/v1/cdep/solutions/{solutionName}",
+			"command": "solution delete <solutionName> <stageName>",
+			"description": "Delete a solution in a particular stage.",
+			"loaderText": "Deleting Solution",
+			"options": [{}],
+			"inputs": [{
+					"name": "solutionName",
+					"type": "uri",
+					"required": true
+				},
+				{
+					"name": "stageName",
+					"type": "query",
+					"required": true,
+					"isStageID": true
+				}
+			],
+			"view": {
+				"table": [{
+					"title": "Delete Status",
+					"path": "$.integration.serviceData",
+					"header": ["Status"],
+					"body": [{
+						"path": "message"
+					}]
+				}],
+				"json": {
+					"path": "$.integration.serviceData"
+				}
+			},
+			"error": {
+				"path": "$.integration.message.description"
+			}
+		},
+		{
+			"id": "solution-update-status",
+			"method": "PATCH",
+			"url": "/integration/rest/external/v1/cdep/solutions/{solutionName}",
+			"command": "solution update-status <solutionName> <stageName> <action>",
+			"description": "Activates or Deactivates a solution.",
+			"loaderText": "Activating/Deactivating Solution",
+			"options": [{}],
+			"inputs": [{
+					"name": "solutionName",
+					"type": "uri",
+					"required": true
+				},
+				{
+					"name": "stageName",
+					"type": "query",
+					"required": true,
+					"isStageID": true
+				},
+				{
+					"name": "action",
+					"paramName": "isActivate",
+					"changeValue": {
+						"activate": "true",
+						"deactivate": "false"
+					},
+					"type": "query",
+					"required": true
+				}
+			],
+			"view": {
+				"table": [{
+					"title": "Activate/Deactivate Status",
+					"path": "$.integration.serviceData",
+					"header": ["Status"],
+					"body": [{
+						"path": "message"
+					}]
+				}],
+				"json": {
+					"path": "$.integration.serviceData"
+				}
+			},
+			"error": {
+				"path": "$.integration.message.description"
+			}
+		},
+		{
+			"id": "solution-get-status",
+			"method": "GET",
+			"url": "/integration/rest/external/v1/cdep/solutions/{solutionName}/status",
+			"command": "solution get-status <solutionName> <stageName>",
+			"description": "Gets the status of all PODS in a solution.",
+			"loaderText": "Retrieving the status of all the PODS in a Solution",
+			"options": [{}],
+			"inputs": [{
+				"name": "solutionName",
+				"type": "uri",
+				"required": true
+			}, {
+				"name": "stageName",
+				"type": "query",
+				"required": true,
+				"isStageID": true
+			}],
+			"view": {
+				"table": [{
+					"title": "Status",
+					"path": "$.integration.serviceData.podsStatus",
+					"isArray": true,
+					"header": ["Product Name", "Product Type", "Phase", "Ready"],
+					"body": [{
+							"path": "$.labels.app"
+						},
+						{
+							"path": "$.labels.product"
+						},
+						{
+							"path": "phase"
+						},
+						{
+							"path": "ready",
+							"isBoolean": true,
+							"trueValue": "Yes",
+							"falseValue": "No"
+						}
+					]
+				}],
+				"json": {
+					"path": "$.integration.serviceData"
+				}
+			}
+		}
+	],
+	"tenant": [{
+			"id": "tenant-get-license-info",
+			"method": "GET",
+			"url": "/integration/rest/external/v1/licenseinfo?applicationType=CloudDeployment",
+			"command": "tenant get-license-info",
+			"description": "Gets the License Info.",
+			"loaderText": "Retrieving License Info",
+			"options": [{}],
+			"view": {
+				"table": [{
+					"title": "License Info",
+					"path": "$.integration.capabilities",
+					"isArray": false,
+					"header": ["Number of Stages", "CPU (Cores)", "Memory (Cores)", "Trial Account"],
+					"body": [{
+							"path": "numberOfStages"
+						},
+						{
+							"path": "cpu"
+						},
+						{
+							"path": "memory"
+						},
+						{
+							"path": "trialAccount",
+							"isBoolean": true,
+							"trueValue": "Yes",
+							"falseValue": "No"
+						}
+					]
+				}],
+				"json": {
+					"path": "$.integration.capabilities"
+				}
+			}
+		},
+		{
+			"id": "tenant-get-utilization-details",
+			"method": "GET",
+			"url": "/integration/rest/external/v1/utilization",
+			"command": "tenant get-utilization-details",
+			"description": "Gets the utilization details for the tenant.",
+			"loaderText": "Retrieving Utilization Details",
+			"options": [{}],
+			"view": {
+				"table": [{
+						"title": "Utilization Details",
+						"path": "$.integration.serviceData",
+						"header": ["Allowed CPU(Cores)", "Used CPU(Cores)", "Allowed Memory(GB)", "Used Memory(GB)"],
+						"body": [{
+								"path": "allowedCpu"
+							},
+							{
+								"path": "usedCpu"
+							},
+							{
+								"path": "allowedMemory"
+							},
+							{
+								"path": "usedMemory"
+							}
+						]
+					},
+					{
+						"title": "Utilization Across Stages",
+						"path": "$.integration.serviceData.stages",
+						"isArray": true,
+						"header": ["Stage Name", "Used CPU(Cores)", "Used Memory(GB)"],
+						"body": [{
+								"path": "stageId",
+								"type": "stageId"
+							},
+							{
+								"path": "cpu"
+							},
+							{
+								"path": "memory"
+							}
+						]
+					}
+				],
+				"json": {
+					"path": "$.integration.serviceData"
+				}
+			}
+		}
+	],
+	"users": [{
+			"id": "user-list",
+			"method": "GET",
+			"url": "/integration/rest/external/v1/user?fieldList=first_name,last_name,id,username,last_login,active,date_created&filter=user_type equals 'P'",
+			"command": "user list",
+			"description": "Lists all the user in a tenant.",
+			"loaderText": "Retrieving Users List",
+			"options": [{}],
+			"view": {
+				"table": [{
+					"title": "Users",
+					"path": "$.integration.serviceData.record",
+					"isArray": true,
+					"header": ["ID", "UserName", "First Name", "Last Name"],
+					"body": [{
+							"path": "id"
+						},
+						{
+							"path": "username"
+						},
+						{
+							"path": "first_name"
+						},
+						{
+							"path": "last_name"
+						}
+					]
+				}],
+				"json": {
+					"path": "$.integration.serviceData.record"
+				}
+			}
+		},
+		{
+			"id": "get-user",
+			"method": "GET",
+			"url": "/integration/rest/external/v1/user/{userId}",
+			"command": "user get <userId>",
+			"description": "Get the User Info.",
+			"loaderText": "Retrieving User Info",
+			"options": [{}],
+			"inputs": [{
+				"name": "userId",
+				"type": "uri",
+				"required": true
+			}],
+			"view": {
+				"table": [{
+					"title": "User Info",
+					"path": "$.integration.serviceData.user",
+					"header": ["ID", "UserName", "Full Name", "Email"],
+					"body": [{
+							"path": "id"
+						},
+						{
+							"path": "username"
+						},
+						{
+							"path": "full_name"
+						},
+						{
+							"path": "email"
+						}
+					]
+				}],
+				"json": {
+					"path": "$.integration.serviceData.user"
+				}
+			},
+			"error": {
+				"defaultMessage": "The specified User ID does not exists."
+			}
+		}
+	],
+	"runtime": [{
+		"id": "runtime-get-exposed-services",
+		"method": "GET",
+		"url": "/integration/rest/external/v1/services/{solutionName}/{nodeName}",
+		"command": "runtime get-exposed-is-services <solutionName> <nodeName> <stageName>",
+		"description": "Retrieves the exposed services details of the given node.",
+		"loaderText": "Retrieving Exposed Services List",
+		"options": [{}],
+		"inputs": [{
+				"name": "solutionName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "nodeName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "stageName",
+				"type": "query",
+				"required": true,
+				"isStageID": true
+			}
+		],
+		"view": {
+			"default": {
+				"name": "Mode :- ",
+				"path": "$.integration.serviceData.accessmode",
+				"transform": {
+					"0": "Allow By Default",
+					"1": "Deny By Default"
+				}
+			},
+			"table": [{
+				"title": "Exposed Services",
+				"path": "$.integration.serviceData.services",
+				"header": ["Services"],
+				"isArray": true,
+				"isStringArray": true
+			}],
+			"json": {
+				"path": "$.integration.serviceData"
+			}
+		},
+		"error": {
+			"path": "$.integration.message.description"
+		}
+	}],
+	"um": [{
+		"id": "um-list-queues",
+		"method": "GET",
+		"url": "/integration/rest/external/v1/cdep/{solutionName}/um/{nodeName}/queues",
+		"command": "um list-queues <solutionName> <nodeName> <stageName>",
+		"description": "Lists all the Queues.",
+		"loaderText": "Retrieving Queues",
+		"options": [{}],
+		"inputs": [{
+				"name": "solutionName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "nodeName",
+				"type": "uri",
+				"required": true
+			},{
+				"name": "stageName",
+				"type": "query",
+				"required": true,
+				"isStageID": true
+			}
+		],
+		"view": {
+			"table": [{
+				"title": "Queues",
+				"path": "$.integration.serviceData.json",
+				"isResponseJSONString": true,
+				"isResponseJSONArray": true,
+				"jsonPath": "queue",
+				"header": ["Name", "Total Pushed", "Total Popped", "Used Space", "Memory Usage"],
+				"body": [{
+						"path": "name"
+					},
+					{
+						"path": "totalPushed"
+					},
+					{
+						"path": "totalPopped"
+					},
+					{
+						"path": "usedSpace"
+					},
+					{
+						"path": "memoryUsage"
+					}
+				]
+			}],
+			"json": {
+				"path": "$.integration.serviceData.json",
+				"isJsonString": true
+			}
+		},
+		"error": {
+			"path": "$.integration.message.description"
+		}
+	},
+	{
+		"id": "um-get-queue",
+		"method": "GET",
+		"url": "/integration/rest/external/v1/cdep/{solutionName}/um/{nodeName}/queues/queue",
+		"command": "um get-queue <solutionName> <nodeName> <stageName> <queueName>",
+		"description": "Gets the queue Info.",
+		"loaderText": "Retrieving Queue Info",
+		"options": [{}],
+		"inputs": [{
+				"name": "solutionName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "nodeName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "stageName",
+				"type": "query",
+				"required": true,
+				"isStageID": true
+			},
+			{
+				"name": "queueName",
+				"type": "query",
+				"required": true
+			}
+		],
+		"view": {
+			"table": [{
+				"title": "Queue",
+				"path": "$.integration.serviceData.json",
+				"isResponseJSONString": true,
+				"isResponseJSONArray": false,
+				"jsonPath": "channel",
+				"header": ["Name", "Total Pushed", "Total Popped", "Used Space", "Memory Usage"],
+				"body": [{
+						"path": "name"
+					},
+					{
+						"path": "totalPushed"
+					},
+					{
+						"path": "totalPopped"
+					},
+					{
+						"path": "usedSpace"
+					},
+					{
+						"path": "memoryUsage"
+					}
+				]
+			}],
+			"json": {
+				"path": "$.integration.serviceData.json",
+				"isJsonString": true
+			}
+		},
+		"error": {
+			"path": "$.integration.message.description"
+		}
+	},
+	{
+		"id": "um-get-queue-details",
+		"method": "GET",
+		"url": "/integration/rest/external/v1/cdep/{solutionName}/um/{nodeName}/queues/detail",
+		"command": "um get-queue-details <solutionName> <nodeName> <stageName> <queueName>",
+		"description": "Gets the queue details.",
+		"loaderText": "Retrieving Queue details",
+		"options": [{}],
+		"inputs": [{
+				"name": "solutionName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "nodeName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "stageName",
+				"type": "query",
+				"required": true,
+				"isStageID": true
+			},
+			{
+				"name": "queueName",
+				"type": "query",
+				"required": true
+			}
+		],
+		"view": {
+			"table": [{
+				"title": "Queue",
+				"path": "$.integration.serviceData.json",
+				"isResponseJSONString": true,
+				"isResponseJSONArray": false,
+				"jsonPath": "channel",
+				"header": ["Name", "Type", "Capacity"],
+				"body": [{
+						"path": "name"
+					},
+					{
+						"path": "type"
+					},
+					{
+						"path": "capacity"
+					}
+				]
+			}],
+			"json": {
+				"path": "$.integration.serviceData.json",
+				"isJsonString": true
+			}
+		},
+		"error": {
+			"path": "$.integration.message.description"
+		}
+	},
+	{
+		"id": "um-get-channel",
+		"method": "GET",
+		"url": "/integration/rest/external/v1/cdep/{solutionName}/um/{nodeName}/channels/channel",
+		"command": "um get-channel <solutionName> <nodeName> <stageName> <channelName>",
+		"description": "Gets the channel Info.",
+		"loaderText": "Retrieving Channel Info",
+		"options": [{}],
+		"inputs": [{
+				"name": "solutionName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "nodeName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "stageName",
+				"type": "query",
+				"required": true,
+				"isStageID": true
+			},
+			{
+				"name": "channelName",
+				"type": "query",
+				"required": true
+			}
+		],
+		"view": {
+			"table": [{
+				"title": "Channel",
+				"path": "$.integration.serviceData.json",
+				"isResponseJSONString": true,
+				"isResponseJSONArray": false,
+				"header": ["Name", "Total Published", "Total Consumed", "Used Space", "Memory Usage"],
+				"body": [{
+						"path": "name"
+					},
+					{
+						"path": "totalPublished"
+					},
+					{
+						"path": "totalConsumed"
+					},
+					{
+						"path": "usedSpace"
+					},
+					{
+						"path": "memoryUsage"
+					}
+				]
+			}],
+			"json": {
+				"path": "$.integration.serviceData.json",
+				"isJsonString": true
+			}
+		},
+		"error": {
+			"path": "$.integration.message.description"
+		}
+	},
+	{
+		"id": "um-list-channels",
+		"method": "GET",
+		"url": "/integration/rest/external/v1/cdep/{solutionName}/um/{nodeName}/channels",
+		"command": "um list-channels <solutionName> <nodeName> <stageName>",
+		"description": "Lists all Channels in a Node.",
+		"loaderText": "Retrieving Channels",
+		"options": [{}],
+		"inputs": [{
+				"name": "solutionName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "nodeName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "stageName",
+				"type": "query",
+				"required": true,
+				"isStageID": true
+			}
+		],
+		"view": {
+			"table": [{
+				"title": "Channels",
+				"path": "$.integration.serviceData.json",
+				"isResponseJSONString": true,
+				"isResponseJSONArray": true,
+				"jsonPath": "channel",
+				"header": ["Name", "Total Published", "Total Consumed"],
+				"body": [{
+						"path": "name"
+					},
+					{
+						"path": "totalPublished"
+					},
+					{
+						"path": "totalConsumed"
+					}
+				]
+			}],
+			"json": {
+				"path": "$.integration.serviceData.json",
+				"isJsonString": true
+			}
+		},
+		"error": {
+			"path": "$.integration.message.description"
+		}
+	},{
+		"id": "um-get-channel-details",
+		"method": "GET",
+		"url": "/integration/rest/external/v1/cdep/{solutionName}/um/{nodeName}/channels/detail",
+		"command": "um get-channel-details <solutionName> <nodeName> <stageName> <channelName>",
+		"description": "Gets the Channel details.",
+		"loaderText": "Retrieving Channel details",
+		"options": [{}],
+		"inputs": [{
+				"name": "solutionName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "nodeName",
+				"type": "uri",
+				"required": true
+			},
+			{
+				"name": "stageName",
+				"type": "query",
+				"required": true,
+				"isStageID": true
+			},
+			{
+				"name": "channelName",
+				"type": "query",
+				"required": true
+			}
+		],
+		"view": {
+			"table": [{
+				"title": "Channels",
+				"path": "$.integration.serviceData.json",
+				"isResponseJSONString": true,
+				"isResponseJSONArray": false,
+				"jsonPath": "channel",
+				"header": ["Name", "Type", "Capacity", "Engine"],
+				"body": [{
+						"path": "name"
+					},
+					{
+						"path": "type"
+					},
+					{
+						"path": "capacity"
+					},
+					{
+						"path": "engine"
+					}
+				]
+			}],
+			"json": {
+				"path": "$.integration.serviceData.json",
+				"isJsonString": true
+			}
+		},
+		"error": {
+			"path": "$.integration.message.description"
+		}
+	}]
+}

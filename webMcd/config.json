@@ -1,0 +1,17 @@
+{
+    "default": {
+        "url": "https://arunkumar007.webmethodscloud.com",
+        "userName": "arun",
+        "password": "**********"
+    },
+    "bvt": {
+        "url": "https://vm-trunk-wmic-01.eur.ad.sag",
+        "userName": "andu",
+        "password": "6afea4aca1f31e038462349f2f4cff62"
+    },
+    "vinay": {
+        "url": "https://daeofik8stest05",
+        "userName": "mocuser2",
+        "password": "5ef364ade2a71ef9a0dc6ab4c6dc2a0f"
+    }
+}

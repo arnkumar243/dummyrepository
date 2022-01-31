@@ -1,0 +1,88 @@
+{
+	"integration": {
+		"landscapeDefinition": {
+			"solutionName": "Solution3",
+			"description": "Sample Solution",
+			"solutionType": 3,
+			"productDefinitions": {
+				"IS": [{
+					"name": "IS1",
+					"isClustered": true,
+					"replicaCount": "2",
+					"statefulCluster": true,
+					"dependencies": ["UM", "DB", "tc1"],
+					"clusterType": "stateful",
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"version": "10.5",
+					"env": {
+						"packages": ["packages.WmCloudStreams.enabled=true", "packages.WmJDBCAdapter.enabled=true"]
+					}
+				}, {
+					"name": "IS2",
+					"isClustered": true,
+					"statefulCluster": true,
+					"replicaCount": "2",
+					"dependencies": ["UM", "DB", "tc2"],
+					"clusterType": "stateful",
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"version": "10.5",
+					"env": {
+						"packages": ["packages.WmCloudStreams.enabled=true", "packages.WmJDBCAdapter.enabled=true"]
+					}
+				}],
+				"UNIVERSALMESSAGING": [{
+					"name": "UM",
+					"isClustered": false,
+					"statefulCluster": false,
+					"clusterType": null,
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"version": "10.5"
+				}],
+				"TERRACOTTA": [{
+					"name": "tc1",
+					"isClustered": true,
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "4"
+						}
+					},
+					"version": "10.5",
+					"env": {
+						"packages": [],
+						"monitoringTools": []
+					}
+				}, {
+					"name": "tc2",
+					"isClustered": true,
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "4"
+						}
+					},
+					"version": "10.5",
+					"env": {
+						"packages": [],
+						"monitoringTools": []
+					}
+				}]
+			}
+		}
+	}
+}

@@ -1,0 +1,40 @@
+{
+	"integration": {
+		"landscapeDefinition": {
+			"solutionName": "SolArn",
+			"description": "sample solution",
+			"solutionType": 2,
+			"productDefinitions": {
+				"IS": [{
+					"name": "IS",
+					"replicaCount": "1",
+					"clusterType": null,
+					"dependencies": ["DB","UM"],
+					"isClustered": false,
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"version": "10.5",
+					"env": {
+						"packages": ["packages.WmCloudStreams.enabled=true", "packages.WmJDBCAdapter.enabled=true"]
+					}
+				}],
+				"UNIVERSALMESSAGING": [{
+					"name": "UM",
+					"clusterType": null,
+					"isClustered": false,
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"version": "10.5"
+				}]
+			}
+		}
+	}
+}

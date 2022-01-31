@@ -1,0 +1,60 @@
+{
+	"integration": {
+		"landscapeDefinition": {
+			"solutionName": "Solution3",
+			"description": "Sample Solution",
+			"solutionType": 3,
+			"productDefinitions": {
+				"IS": [{
+					"name": "IS1",
+					"isClustered": true,
+					"replicaCount": "2",
+					"statefulCluster": false,
+					"dependencies": ["UM", "DB"],
+					"clusterType": "stateless",
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"version": "10.5",
+					"env": {
+						"packages": ["packages.WmCloudStreams.enabled=true", "packages.WmJDBCAdapter.enabled=true"]
+					}
+				}, {
+					"name": "IS2",
+					"isClustered": true,
+					"statefulCluster": false,
+					"replicaCount": "2",
+					"dependencies": ["UM", "DB"],
+					"clusterType": "stateless",
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"version": "10.5",
+					"env": {
+						"packages": ["packages.WmCloudStreams.enabled=true", "packages.WmJDBCAdapter.enabled=true"]
+					}
+				}],
+				"UNIVERSALMESSAGING": [{
+					"name": "UM",
+					"isClustered": false,
+					"statefulCluster": false,
+					"clusterType": null,
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"version": "10.5"
+				}]
+				
+			}
+		}
+	}
+}

@@ -1,0 +1,163 @@
+{
+    "1": {
+        "IS_1": {
+            "enabled": true,
+            "labels": {
+                "app": "frontend"
+            },
+            "exposedServices": [],
+            "extraParameters": {
+                "cordinates": {
+                    "row": 5,
+                    "column": 3
+                }
+            },
+            "image": {
+                "tag": ""
+            }
+        },
+		"TC_1":{
+			  "replicaCount": 2,
+			  "enabled": true,
+			  "image": {
+						"tag": ""
+					},
+			  "extraParameters": {
+					"cordinates": {
+						"row": 2,
+						"column": 10
+					}
+				}
+			}
+	},
+    "2": {
+        "IS_1": {
+            "enabled": true,
+            "image": {
+                "tag": ""
+            },
+            "labels": {
+                "app": "frontend"
+            },
+            "exposedServices": [],
+            "extraParameters": {
+                "cordinates": {
+                    "row": 5,
+                    "column": 3
+                }
+            },
+			"monitoring": {}
+        },
+        "UM": {
+		    "replicaCount": 1,
+            "enabled": true,
+            "image": {
+                "tag": ""
+            },
+            "labels": {
+                "app": "backend"
+            },
+            "extraParameters": {
+                "cordinates": {
+                    "row": 5,
+                    "column": 11
+                }
+            },
+            "env": {
+                "packages": [],
+				"monitoringTools": []
+            }
+        },
+		"TC_1":{
+			"replicaCount": 2,
+			"enabled": true,
+			"image": {
+					"tag": ""
+				},
+			"extraParameters": {
+				"cordinates": {
+					"row": 2,
+					"column": 7
+				}
+			}
+		}
+    },
+    "3": {
+        "IS_1": {
+            "enabled": true,
+            "image": {
+                "tag": ""
+            },
+            "labels": {
+                "app": "frontend"
+            },
+            "exposedServices": [],
+            "extraParameters": {
+                "cordinates": {
+                    "row": 5,
+                    "column": 2
+                }
+            }
+        },
+        "IS_2": {
+            "enabled": true,
+            "image": {
+                "tag": ""
+            },
+            "labels": {
+                "app": "backend"
+            },
+            "extraParameters": {
+                "cordinates": {
+                    "row": 5,
+                    "column": 12
+                }
+            }
+        },
+        "UM": {
+            "replicaCount": 1,
+            "enabled": true,
+            "image": {
+                "tag": ""
+            },
+            "labels": {
+                "app": "backend"
+            },
+            "extraParameters": {
+                "cordinates": {
+                    "row": 5,
+                    "column": 6
+                }
+            },
+            "env": {
+                "packages": []
+            }
+        },
+		"TC_1":{
+			"replicaCount": 2,
+			"enabled": true,
+			"image": {
+				 "tag": ""
+				},
+			"extraParameters": {
+				"cordinates": {
+					"row": 8,
+					"column": 5
+				}
+			}
+		},
+		"TC_2":{
+			"replicaCount": 2,
+			"enabled": true,
+			"image": {
+				 "tag": ""
+				},
+			"extraParameters": {
+				"cordinates": {
+					"row": 8,
+					"column": 9
+				}
+			}
+		}
+    }
+}

@@ -1,0 +1,41 @@
+{
+	"integration": {
+		"landscapeDefinition": {
+			"solutionName": "Solution2",
+			"description": "sample solution",
+			"solutionType": 2,
+			"productDefinitions": {
+				"IS": [{
+					"name": "IS",
+					"replicaCount": "2",
+					"clusterType": "stateless",
+					"dependencies": ["DB","UM"],
+					"isClustered": true,
+					"statefulCluster": false,
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"version": "10.5",
+					"env": {
+						"packages": ["packages.WmCloudStreams.enabled=true", "packages.WmJDBCAdapter.enabled=true"]
+					}
+				}],
+				"UNIVERSALMESSAGING": [{
+					"name": "UM",
+					"clusterType": null,
+					"isClustered": false,
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"version": "10.5"
+				}]
+			}
+		}
+	}
+}

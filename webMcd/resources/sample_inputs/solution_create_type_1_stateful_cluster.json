@@ -1,0 +1,47 @@
+{
+	"integration": {
+		"landscapeDefinition": {
+			"solutionName": "Demo",
+			"description": "Demo Solution",
+			"solutionType": 1,
+			"productDefinitions": {
+				"IS": [{
+					"name": "IS",
+					"replicaCount": "2",
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "2"
+						}
+					},
+					"dependencies": ["DB","tc"],
+					"clusterType": "stateful",
+					"isClustered": true,
+					"statefulCluster": true,
+					"version": "10.5",
+					"env": {
+						"packages": ["packages.WmCloudStreams.enabled=true", "packages.WmJDBCAdapter.enabled=true"]
+					}
+				}],
+				"TERRACOTTA": [{
+				    "name": "tc",
+					"isClustered": true,
+					"statefulCluster": false,
+					"replicaCount": "2",
+					"enabled": true,
+					"resources": {
+						"limits": {
+							"cpu": "1",
+							"memory": "4"
+						}
+					},
+					"version": "10.5",
+					"env": {
+						"packages": [],
+						"monitoringTools": []
+					}
+				}]
+			}
+		}
+	}
+}
